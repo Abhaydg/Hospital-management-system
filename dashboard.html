@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container py-5">
+  <h1>Hospital Dashboard</h1>
+
+  <!-- Patients -->
+  <h2>Patients</h2>
+  <form method="POST" action="/add_patient" class="mb-3">
+    <input type="text" name="name" placeholder="Name" required>
+    <input type="number" name="age" placeholder="Age" required>
+    <input type="text" name="disease" placeholder="Disease" required>
+    <select name="doctor_id" required>
+      <option value="">Assign Doctor</option>
+      {% for doctor in doctors %}
+        <option value="{{ doctor.id }}">{{ doctor.name }} ({{ doctor.specialization }})</option>
+      {% endfor %}
+    </select>
+    <button class="btn btn-primary">Add Patient</button>
+  </form>
+  <ul>
+    {% for patient in patients %}
+      <li>{{ patient.name }} ({{ patient.disease }}) → Doctor: {{ patient.doctor.name if patient.doctor else 'None' }}
+        <a href="/delete_patient/{{ patient.id }}" class="btn btn-sm btn-danger">Delete</a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <!-- Doctors -->
+  <h2>Doctors</h2>
+  <form method="POST" action="/add_doctor" class="mb-3">
+    <input type="text" name="name" placeholder="Name" required>
+    <input type="text" name="specialization" placeholder="Specialization" required>
+    <button class="btn btn-success">Add Doctor</button>
+  </form>
+  <ul>
+    {% for doctor in doctors %}
+      <li>{{ doctor.name }} ({{ doctor.specialization }})
+        <a href="/delete_doctor/{{ doctor.id }}" class="btn btn-sm btn-danger">Delete</a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <!-- Appointments -->
+  <h2>Appointments</h2>
+  <form method="POST" action="/add_appointment" class="mb-3">
+    <select name="patient_id" required>
+      <option value="">Select Patient</option>
+      {% for patient in patients %}
+        <option value="{{ patient.id }}">{{ patient.name }}</option>
+      {% endfor %}
+    </select>
+    <select name="doctor_id" required>
+      <option value="">Select Doctor</option>
+      {% for doctor in doctors %}
+        <option value="{{ doctor.id }}">{{ doctor.name }}</option>
+      {% endfor %}
+    </select>
+    <input type="date" name="date" required>
+    <input type="text" name="notes" placeholder="Notes">
+    <button class="btn btn-warning">Add Appointment</button>
+  </form>
+  <ul>
+    {% for app in appointments %}
+      <li>{{ app.patient.name }} with {{ app.doctor.name }} on {{ app.date }} → {{ app.notes }}
+        <a href="/delete_appointment/{{ app.id }}" class="btn btn-sm btn-danger">Delete</a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <br>
+  <a href="/logout" class="btn btn-dark">Logout</a>
+</body>
+</html>
